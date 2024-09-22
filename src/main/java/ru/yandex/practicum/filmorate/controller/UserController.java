@@ -40,6 +40,7 @@ public class UserController {
             users.put(newUser.getId(), newUser);
             log.info("Информация о пользователе обновлена / тело объекта : {}", newUser);
             return newUser;
-        } throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
+        }
+        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
     }
 }

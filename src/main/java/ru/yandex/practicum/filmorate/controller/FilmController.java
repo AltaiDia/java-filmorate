@@ -45,6 +45,7 @@ public class FilmController {
                 return newFilm;
 
             }
-        } throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+        }
+        throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
     }
 }
