@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class User {
 
     Long id;
+    @NotBlank
     @Email(message = "Введите в формате Email, @ - обязательна")
     String email;
     @NotBlank(message = "Логин не может быть пустым")
