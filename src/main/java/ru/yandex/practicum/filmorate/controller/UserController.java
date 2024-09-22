@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.utility.classes.NextId;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 @Slf4j
 @RestController()
 @RequestMapping("/users")
@@ -23,9 +24,9 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-      log.info("Получен запрос POST / тело объекта : {}", user);
+        log.info("Получен запрос POST / тело объекта : {}", user);
         user.setId(NextId.getNextId(users));
-        if (user.getName().isBlank()){
+        if (user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
@@ -36,7 +37,7 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
         log.info("Получен запрос PUT / тело объекта : {}", newUser);
-        if(users.containsKey(newUser.getId())){
+        if (users.containsKey(newUser.getId())) {
             users.put(newUser.getId(), newUser);
             log.info("Информация о пользователе обновлена / тело объекта : {}", newUser);
             return newUser;
