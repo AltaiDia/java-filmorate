@@ -1,6 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +20,6 @@ public class User {
     @NotBlank(message = "Логин не может быть пустым")
     @Pattern(regexp = "\\S+", message = "поле не может содержать пробелы")
     String login;
-    @NotNull
     String name;
     @Past
     LocalDate birthday;

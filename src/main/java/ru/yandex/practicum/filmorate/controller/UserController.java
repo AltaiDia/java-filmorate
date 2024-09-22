@@ -26,12 +26,13 @@ public class UserController {
     public User create(@Valid @RequestBody User user) {
         log.info("Получен запрос POST / тело объекта : {}", user);
         user.setId(NextId.getNextId(users));
-        if (user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
         log.info("Новый пользователь успешно сохранен / тело объекта : {}", user);
         return user;
+        //return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
 
     @PutMapping
