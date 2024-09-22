@@ -18,12 +18,14 @@ public class FilmControllerTests {
 
     @Autowired
     private Validator validator;
+
     @Test
     void failValidateEmpty() {
         Film film = Film.builder().build();
         final var violations = validator.validate(film);
         Assertions.assertThat(violations).isNotEmpty();
     }
+
     @Test
     void failValidateNameNotBlank() {
         Film film = Film.builder()
@@ -35,6 +37,7 @@ public class FilmControllerTests {
         final var violations = validator.validate(film);
         Assertions.assertThat(violations).isNotEmpty();
     }
+
     @Test
     void failValidateDescriptionSize() throws IOException, URISyntaxException {
         Film film = Film.builder()
@@ -46,8 +49,9 @@ public class FilmControllerTests {
         final var violations = validator.validate(film);
         Assertions.assertThat(violations).isNotEmpty();
     }
+
     @Test
-    void failValidateReleaseDateNotNull(){
+    void failValidateReleaseDateNotNull() {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("Описание")
@@ -57,8 +61,9 @@ public class FilmControllerTests {
         final var violations = validator.validate(film);
         Assertions.assertThat(violations).isNotEmpty();
     }
+
     @Test
-    void failValidateReleaseDateAfterDate(){
+    void failValidateReleaseDateAfterDate() {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("Описание")
@@ -68,8 +73,9 @@ public class FilmControllerTests {
         final var violations = validator.validate(film);
         Assertions.assertThat(violations).isNotEmpty();
     }
+
     @Test
-    void failValidatePositiveDuration(){
+    void failValidatePositiveDuration() {
         Film film = Film.builder()
                 .name("Фильм")
                 .description("Описание")
