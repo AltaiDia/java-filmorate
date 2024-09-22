@@ -5,7 +5,7 @@ import java.util.Map;
 public class NextId {
     public static Long getNextId(Map<Long,?> collection) {
         Long maxId = collection.keySet().stream()
-                .mapToLong(id ->id)
+                .mapToLong(id -> id)
                 .max()
                 .orElse(0);
         return ++maxId;
