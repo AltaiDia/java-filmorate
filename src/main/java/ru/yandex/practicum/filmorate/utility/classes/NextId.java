@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.utility.classes;
 
-import java.util.Map;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class NextId {
-    public static Long getNextId(Map<Long,?> collection) {
-        Long maxId = collection.keySet().stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++maxId;
+    private long nextId = 0;
+
+    public long getNextId() {
+        return ++nextId;
     }
 }
