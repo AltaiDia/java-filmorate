@@ -9,7 +9,7 @@ public interface FilmStorage {
 
     void deleteFilm(long id);
 
-    public Collection<Film> findAllFilms();
+    Collection<Film> findAllFilms();
 
     Film getFilm(long id);
 
