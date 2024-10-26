@@ -12,6 +12,4 @@ public interface FilmStorage {
     Collection<Film> findAllFilms();
 
     Film getFilm(long id);
-
-    Film modificationFilm(Film newFilm);
 }

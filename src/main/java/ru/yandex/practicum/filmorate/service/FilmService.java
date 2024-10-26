@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.utility.classes.NextId;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -16,12 +18,32 @@ import java.util.List;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final NextId nextId;
 
-    public Film addLike(String fId, String usId) {
-        long filmId = Long.parseLong(fId);
-        long userId = Long.parseLong(usId);
+    public Film createFilm(Film film) {
+        film.setId(nextId.getNextId());
+        filmStorage.addFilm(film);
+        log.info("Фильм успешно сохранен / тело объекта : {}", film);
+        return film;
+    }
+
+    public Film updateFilm(Film newFilm) {
+        if (filmStorage.findAllFilms().stream()
+                .anyMatch(film -> film.getId()
+                        .equals(newFilm.getId()))) {
+            filmStorage.addFilm(newFilm);
+            return newFilm;
+        }
+        throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+    }
+
+    public Collection<Film> findFilms() {
+        return filmStorage.findAllFilms();
+    }
+
+    public Film addLike(long filmId, long userId) {
         if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("Пользователь с id = " + usId + " не найден");
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
         filmStorage.getFilm(filmId)
                 .getListUsersLike()
@@ -30,11 +52,10 @@ public class FilmService {
         return filmStorage.getFilm(filmId);
     }
 
-    public Film deleteLike(String fId, String usId) {
-        long filmId = Long.parseLong(fId);
-        long userId = Long.parseLong(usId);
+    public Film deleteLike(long filmId, long userId) {
+        ;
         if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("Пользователь с id = " + usId + " не найден");
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
         filmStorage.getFilm(filmId)
                 .getListUsersLike()
@@ -43,8 +64,7 @@ public class FilmService {
         return filmStorage.getFilm(filmId);
     }
 
-    public List<Film> getTopFilms(String c) {
-        int count = Integer.parseInt(c);
+    public List<Film> getTopFilms(int count) {
         List<Film> filmList = filmStorage.findAllFilms().stream()
                 .sorted((f1, f2) -> f2.getListUsersLike().size() - f1.getListUsersLike().size())
                 .limit(count)

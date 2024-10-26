@@ -12,6 +12,4 @@ public interface UserStorage {
     Collection<User> findAllUsers();
 
     void deleteUser(long id);
-
-    User modificationUser(User newUser);
 }
