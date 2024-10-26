@@ -30,56 +30,57 @@ public class UserService {
         return user;
     }
 
+    public User getUser(long id) {
+        return userStorage.getUser(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + id + " не найден"));
+    }
+
     public User updateUser(User newUser) {
-        if (userStorage.findAllUsers().stream()
-                .anyMatch(user -> user.getId()
-                        .equals(newUser.getId()))) {
-            nameCheck(newUser);
-            userStorage.addUser(newUser);
-            log.info("Информация о пользователе обновлена / тело объекта : {}", newUser);
-            return newUser;
-        }
-        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
+        getUser(newUser.getId());
+        nameCheck(newUser);
+        userStorage.addUser(newUser);
+        log.info("Информация о пользователе обновлена / тело объекта : {}", newUser);
+        return newUser;
     }
 
     public User addFriend(long userId, long friendId) {
-        userStorage.getUser(userId)
+        getUser(userId)
                 .getListFrendsId()
                 .add(friendId);
 
-        userStorage.getUser(friendId)
+        getUser(friendId)
                 .getListFrendsId()
                 .add(userId);
         log.info("Друг успешно добавлен / тело объекта : {}", userStorage.getUser(userId));
-        return userStorage.getUser(userId);
+        return getUser(userId);
     }
 
     public User deleteFend(long userId, long friendId) {
-        userStorage.getUser(userId)
+        getUser(userId)
                 .getListFrendsId()
                 .remove(friendId);
 
-        userStorage.getUser(friendId)
+        getUser(friendId)
                 .getListFrendsId()
                 .remove(userId);
         log.info("Друг успешно удален / тело объекта : {}", userStorage.getUser(userId));
-        return userStorage.getUser(userId);
+        return getUser(userId);
     }
 
     public Collection<User> getListCommonFriends(long userId, long otherId) {
-        List<User> commanFrendsList = userStorage.getUser(otherId).getListFrendsId()
+        List<User> commanFrendsList = getUser(otherId).getListFrendsId()
                 .stream()
-                .filter(id -> userStorage.getUser(userId).getListFrendsId().contains(id))
-                .map(userStorage::getUser)
+                .filter(id -> getUser(userId).getListFrendsId().contains(id))
+                .map(this::getUser)
                 .toList();
         log.info("Список успешно сформирован / тело объекта : {}", commanFrendsList);
         return commanFrendsList;
     }
 
     public Collection<User> getListFriends(long userId) {
-        List<User> friendsList = userStorage.getUser(userId).getListFrendsId()
+        List<User> friendsList = getUser(userId).getListFrendsId()
                 .stream()
-                .map(userStorage::getUser)
+                .map(this::getUser)
                 .toList();
         log.info("Список успешно сформирован / тело объекта : {}", friendsList);
         return friendsList;

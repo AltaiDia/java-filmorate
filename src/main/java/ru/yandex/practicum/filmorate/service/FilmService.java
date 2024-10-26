@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.utility.classes.NextId;
 
 import java.util.Collection;
@@ -17,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserService userService;
     private final NextId nextId;
 
     public Film createFilm(Film film) {
@@ -27,14 +26,16 @@ public class FilmService {
         return film;
     }
 
+    public Film getFilm(long id) {
+        return filmStorage.getFilm(id)
+                .orElseThrow(() -> new NotFoundException("Фильм с id = " + id + " не найден"));
+    }
+
     public Film updateFilm(Film newFilm) {
-        if (filmStorage.findAllFilms().stream()
-                .anyMatch(film -> film.getId()
-                        .equals(newFilm.getId()))) {
-            filmStorage.addFilm(newFilm);
-            return newFilm;
-        }
-        throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+        getFilm(newFilm.getId());
+        filmStorage.addFilm(newFilm);
+        log.info("Информация о фильма обновлена / тело объекта : {}", newFilm);
+        return newFilm;
     }
 
     public Collection<Film> findFilms() {
@@ -42,26 +43,23 @@ public class FilmService {
     }
 
     public Film addLike(long filmId, long userId) {
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        }
-        filmStorage.getFilm(filmId)
+        getFilm(filmId)
                 .getListUsersLike()
-                .add(userId);
-        log.info("Лайк успешно добавлен / тело объекта : {}", filmStorage.getFilm(filmId));
-        return filmStorage.getFilm(filmId);
+                .add(userService
+                        .getUser(userId)
+                        .getId());
+        log.info("Лайк успешно добавлен / тело объекта : {}", getFilm(filmId));
+        return getFilm(filmId);
     }
 
     public Film deleteLike(long filmId, long userId) {
-        ;
-        if (userStorage.getUser(userId) == null) {
-            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        }
-        filmStorage.getFilm(filmId)
+        getFilm(filmId)
                 .getListUsersLike()
-                .remove(userId);
-        log.info("Лайк успешно удален / тело объекта : {}", filmStorage.getFilm(filmId));
-        return filmStorage.getFilm(filmId);
+                .remove(userService
+                        .getUser(userId)
+                        .getId());
+        log.info("Лайк успешно удален / тело объекта : {}", getFilm(filmId));
+        return getFilm(filmId);
     }
 
     public List<Film> getTopFilms(int count) {

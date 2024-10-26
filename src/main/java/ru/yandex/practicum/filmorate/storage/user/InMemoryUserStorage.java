@@ -20,9 +20,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(long id) {
-        return Optional.ofNullable(users.get(id))
-                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + id + " не найден"));
+    public Optional<User> getUser(long id) {
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
@@ -30,7 +29,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.remove(id) == null) {
             throw new NotFoundException("Пользователь с id = " + id + " не найден");
         }
-
     }
 
     @Override

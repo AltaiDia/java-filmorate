@@ -13,18 +13,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice()
 public class ErrorHandler {
-    @ExceptionHandler
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
+    public ErrorResponse handleValidationException(final Exception e) {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
-        return new ErrorResponse("Провал валидации", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleViolationConstraint(final ConstraintViolationException e) {
-        log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
-        return new ErrorResponse("Нарушение ограничений", e.getMessage());
+        if (e instanceof MethodArgumentNotValidException) {
+            return new ErrorResponse("Провал валидации", e.getMessage());
+        } else if (e instanceof ConstraintViolationException) {
+            return new ErrorResponse("Нарушение ограничений", e.getMessage());
+        } else {
+            return new ErrorResponse("Неожиданная ошибка", e.getMessage());
+        }
     }
 
     @ExceptionHandler
