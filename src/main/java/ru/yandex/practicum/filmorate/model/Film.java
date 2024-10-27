@@ -9,6 +9,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.custom.annotations.AfterDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -26,4 +28,5 @@ public class Film {
     @NotNull
     @Positive(message = "продолжительность фильма не должна быть отрицательной")
     private Long duration;
+    private final Set<Long> listUsersLike = new HashSet<>();
 }
